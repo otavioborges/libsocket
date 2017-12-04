@@ -1,6 +1,6 @@
 .PHONY: clean
 
-CXXFLAGS= -fPIC -g
+CXXFLAGS= -fpic -Wall -g
 LDFLAGS= -shared
 
 BINDIR= build
@@ -21,5 +21,5 @@ clean:
 $(BINDIR)/$(TARGET_LIB): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
-$(OBJECTS): $(SOURCES)
-	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+$(BINDIR)/%.o : %.cpp
+	$(CXX) -c $(CXXFLAGS) $^ -o $@ -lbluetooth
