@@ -1,11 +1,11 @@
 #ifndef SOCKETCLIENT_H_
 #define SOCKETCLIENT_H_
 
-namespace socket {
+namespace net {
 	class SocketClient;
 }
 
-class socket::SocketClient {
+class net::SocketClient {
 
 };
 
