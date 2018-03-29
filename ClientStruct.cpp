@@ -6,20 +6,24 @@
 using namespace std;
 using namespace net;
 
-pthread_mutex_t ClientStruct::CALLBACK_MUTEX = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t ClientStruct::RECEIVED_MUTEX = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t ClientStruct::DISCONNECTED_MUTEX = PTHREAD_MUTEX_INITIALIZER;
 
 void *ClientStruct::RecvRoutine(void *args) {
 	ssize_t msgSize = -1;
 	thread_args_t *arguments = (thread_args_t *)args;
 
-	while (arguments->running) {
+	while (arguments->connected) {
 		msgSize = recv(arguments->clientSocket, arguments->buffer, BUFFER_SIZE, 0);
 		if (msgSize >= 0) {
 			if (arguments->callback != NULL) {
-				pthread_mutex_lock(&ClientStruct::CALLBACK_MUTEX);
-				arguments->callback->ReceivedMessage(&arguments->addr, arguments->buffer, msgSize);
-				pthread_mutex_unlock(&ClientStruct::CALLBACK_MUTEX);
+				pthread_mutex_lock(&ClientStruct::RECEIVED_MUTEX);
+				arguments->callback->ReceivedMessage(arguments->instance, arguments->buffer, msgSize);
+				pthread_mutex_unlock(&ClientStruct::RECEIVED_MUTEX);
 			}
+		} else {
+			arguments->connected = false;
+			arguments->callback->DisconnectedClient(arguments->instance);
 		}
 	}
 
@@ -30,31 +34,48 @@ ClientStruct::ClientStruct(int clientSocket, struct sockaddr_in addr, net::Socke
 	m_threadArgs.addr = addr;
 	m_threadArgs.clientSocket = clientSocket;
 	m_threadArgs.callback = &callback;
+	m_threadArgs.instance = this;
+
+//	int errorSize = sizeof(m_threadArgs.error);
+//	getsockopt(m_threadArgs.clientSocket, SOL_SOCKET, SO_ERROR, &m_threadArgs.error, (socklen_t *)&errorSize);
 
 	int result = pthread_create(&m_recvThread, NULL, ClientStruct::RecvRoutine, (void *)&m_threadArgs);
 	if (result != 0)
-		m_threadArgs.running = false;
+		m_threadArgs.connected = false;
 	else
-		m_threadArgs.running = true;
+		m_threadArgs.connected = true;
 
 
 }
 
-ClientStruct::~ClientStruct() {
-	shutdown(m_threadArgs.clientSocket, SHUT_RDWR);
+ClientStruct::~ClientStruct(void) {
+	m_threadArgs.connected = false;
 	close(m_threadArgs.clientSocket);
 
-	m_threadArgs.running = false;
 	pthread_join(m_recvThread, NULL);
-	pthread_mutex_destroy(&ClientStruct::CALLBACK_MUTEX);
 }
 
-bool ClientStruct::Running(void) {
-	return m_threadArgs.running;
+void ClientStruct::Close(void) {
+	m_threadArgs.connected = false;
+	close(m_threadArgs.clientSocket);
+
+	pthread_join(m_recvThread, NULL);
+
+	pthread_mutex_lock(&ClientStruct::DISCONNECTED_MUTEX);
+	m_threadArgs.callback->DisconnectedClient(m_threadArgs.instance);
+	pthread_mutex_unlock(&ClientStruct::DISCONNECTED_MUTEX);
+}
+
+bool ClientStruct::Connected(void) {
+	return m_threadArgs.connected;
+}
+
+struct sockaddr_in *ClientStruct::GetAddress(void) {
+	return &m_threadArgs.addr;
 }
 
 int ClientStruct::SendMessage(const uint8_t *msg, uint16_t length) {
-	if (m_threadArgs.running) { // TODO: handle broken pipe
+	if (m_threadArgs.connected) { // TODO: handle broken pipe
 		return write(m_threadArgs.clientSocket, msg, length);
 	} else {
 		return -1;

@@ -2,19 +2,18 @@
 #define SOCKETSERVER_H_
 
 #include <stdint.h>
-#include <vector>
+#include <set>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+
+#include "net.h"
 #include "socketFamily.h"
 #include "socketType.h"
 #include "ClientStruct.h"
 #include "SocketServerCallback.h"
-
-namespace net {
-	class SocketServer;
-}
+#include "ClientStructSet.h"
 
 class net::SocketServer {
 	private:
@@ -23,7 +22,7 @@ class net::SocketServer {
 		typedef struct {
 			int socket;
 			bool listenning;
-			std::vector<net::ClientStruct *> clientList;
+			net::ClientStructSet clientList;
 			net::SocketServerCallback *callbacks;
 			unsigned int maxClients;
 		} listen_thread_t;
@@ -49,7 +48,9 @@ class net::SocketServer {
 		void DefineMaxClients(unsigned int clients);
 		void SetupCallbacks(net::SocketServerCallback &callback);
 
-		std::vector<net::ClientStruct *> GetConnectedClients(void);
+		void DisconnectClient(net::ClientStruct *client);
+		net::ClientStruct *GetClientIfPresent(struct in_addr addr);
+		net::ClientStructSet *GetConnectedClients(void);
 };
 
 #endif /* SOCKETSERVER_H_ */

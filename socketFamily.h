@@ -2,10 +2,7 @@
 #define SOCKETFAMILY_H_
 
 #include <cstdlib>
-
-namespace net {
-	enum class SocketFamily;
-}
+#include "net.h"
 
 enum class net::SocketFamily {
 	FamilyUnspec	= 0,

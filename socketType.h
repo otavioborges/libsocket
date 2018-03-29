@@ -2,10 +2,7 @@
 #define SOCKETTYPE_H_
 
 #include <cstdlib>
-
-namespace net {
-	enum class SocketType;
-}
+#include "net.h"
 
 enum class net::SocketType {
 	SockStream		= 1,

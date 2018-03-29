@@ -1,11 +1,12 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <algorithm>
 #include "socketServer.h"
 using namespace net;
 using namespace std;
 
-typedef vector<ClientStruct *>::iterator clientListIterator;
+typedef ClientStructSet::iterator clientListIterator;
 
 void *SocketServer::ListenRoutine(void *args) {
 	int result = -1;
@@ -20,8 +21,10 @@ void *SocketServer::ListenRoutine(void *args) {
 			clientAddrLength = sizeof(clientAddr);
 			clientSocket = accept(arguments->socket, (struct sockaddr *)&clientAddr, (socklen_t *)&clientAddrLength);
 			if (clientSocket >= 0) {
-				arguments->clientList.push_back(new ClientStruct(clientSocket, clientAddr, *arguments->callbacks));
-				arguments->callbacks->ConnectedClient(clientAddr);
+				ClientStruct *client = new ClientStruct(clientSocket, clientAddr, *arguments->callbacks);
+
+				arguments->clientList.insert(client);
+				arguments->callbacks->ConnectedClient(client);
 			}
 		}
 	}
@@ -49,13 +52,6 @@ SocketServer::SocketServer(in_addr_t listenTo, uint16_t port, SocketFamily famil
 		m_isValid = false;
 	else
 		m_isValid = true;
-
-	// setup socket options
-//	struct timeval timeout;
-//	timeout.tv_sec = 10;
-//	timeout.tv_usec = 0;
-//
-//	setsockopt(m_socket, SOL_SOCKET, SO_BINDTODEVICE)
 }
 
 
@@ -67,8 +63,13 @@ SocketServer::~SocketServer() {
 		m_threadArgs.clientList.erase(it);
 	}
 
+	if (m_threadArgs.listenning)
+		m_threadArgs.listenning = false;
+
 	shutdown(m_threadArgs.socket, SHUT_RDWR);
 	close(m_threadArgs.socket);
+
+	pthread_join(m_listenThread, NULL);
 }
 
 bool SocketServer::StartListenning(void) {
@@ -115,6 +116,27 @@ void SocketServer::SetupCallbacks(SocketServerCallback &callback) {
 	m_threadArgs.callbacks = &callback;
 }
 
-vector<ClientStruct *> SocketServer::GetConnectedClients(void) {
-	return m_threadArgs.clientList;
+void SocketServer::DisconnectClient(ClientStruct *client) {
+	clientListIterator it = find(m_threadArgs.clientList.begin(), m_threadArgs.clientList.end(), client);
+
+	if (it != m_threadArgs.clientList.end()) {
+		delete (*it);
+		m_threadArgs.clientList.erase(it);
+	}
+}
+
+ClientStruct *SocketServer::GetClientIfPresent(struct in_addr addr) {
+	clientListIterator it = m_threadArgs.clientList.begin();
+	while (it != m_threadArgs.clientList.end()) {
+		if ((*it)->GetAddress()->sin_addr.s_addr == addr.s_addr)
+			return *it;
+		else
+			it++;
+	}
+
+	return NULL; // not found
+}
+
+ClientStructSet *SocketServer::GetConnectedClients(void) {
+	return &m_threadArgs.clientList;
 }

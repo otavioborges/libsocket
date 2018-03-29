@@ -1,9 +1,7 @@
 #ifndef SOCKETCLIENT_H_
 #define SOCKETCLIENT_H_
 
-namespace net {
-	class SocketClient;
-}
+#include "net.h"
 
 class net::SocketClient {
 

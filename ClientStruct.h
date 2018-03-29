@@ -5,24 +5,24 @@
 #include <stdint.h>
 #include <netinet/in.h>
 #include <pthread.h>
+#include "net.h"
 #include "SocketServerCallback.h"
 
 #define BUFFER_SIZE 1024
 
-namespace net {
-	class ClientStruct;
-}
-
 class net::ClientStruct {
 	private:
-		static pthread_mutex_t CALLBACK_MUTEX;
+		static pthread_mutex_t RECEIVED_MUTEX;
+		static pthread_mutex_t DISCONNECTED_MUTEX;
 
 		typedef struct {
+			net::ClientStruct *instance;
 			int clientSocket;
-			bool running;
+			bool connected;
 			net::SocketServerCallback *callback;
 			uint8_t buffer[BUFFER_SIZE];
 			struct sockaddr_in addr;
+			int error;
 		}thread_args_t;
 
 		pthread_t m_recvThread;
@@ -31,8 +31,10 @@ class net::ClientStruct {
 		static void *RecvRoutine(void *args);
 	public:
 		ClientStruct(int clientSocket, struct sockaddr_in addr, net::SocketServerCallback &callback);
-		~ClientStruct();
-		bool Running(void);
+		~ClientStruct(void);
+		void Close(void);
+		bool Connected(void);
+		struct sockaddr_in *GetAddress(void);
 
 		// Sending msg
 		int SendMessage(const uint8_t *msg, uint16_t length);
