@@ -21,10 +21,13 @@ void *SocketServer::ListenRoutine(void *args) {
 			clientAddrLength = sizeof(clientAddr);
 			clientSocket = accept(arguments->socket, (struct sockaddr *)&clientAddr, (socklen_t *)&clientAddrLength);
 			if (clientSocket >= 0) {
-				ClientStruct *client = new ClientStruct(clientSocket, clientAddr, *arguments->callbacks);
+				uint8_t enable = 0x01;
+				if (result == 0) {
+					ClientStruct *client = new ClientStruct(clientSocket, clientAddr, *arguments->callbacks);
 
-				arguments->clientList.insert(client);
-				arguments->callbacks->ConnectedClient(client);
+					arguments->clientList.insert(client);
+					arguments->callbacks->ConnectedClient(client);
+				}
 			}
 		}
 	}

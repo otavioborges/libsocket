@@ -10,6 +10,7 @@ class net::SocketServerCallback {
 		virtual void ConnectedClient(net::ClientStruct *client) = 0;
 		virtual void DisconnectedClient(net::ClientStruct *client) = 0;
 		virtual void ReceivedMessage(net::ClientStruct *client, uint8_t *msg, uint16_t size) = 0;
+		virtual void SendCallback(net::ClientStruct *client, int sent) {};
 };
 
 #endif /* SOCKETSERVERCALLBACK_H_ */
