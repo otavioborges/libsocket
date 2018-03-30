@@ -92,14 +92,16 @@ ClientStruct::~ClientStruct(void) {
 	m_threadArgs.connected = false;
 	close(m_threadArgs.clientSocket);
 
+	pthread_join(m_recvThread, NULL);
+
 	pthread_mutex_lock(&SEND_MUTEX);
 	vector<pair<uint16_t, uint8_t *>>::iterator it;
 	for (it = m_threadArgs.bufferSendMsgs.begin(); it != m_threadArgs.bufferSendMsgs.end(); ++it) {
-		delete[] (*it).second;
+		delete[](*it).second;
 		m_threadArgs.bufferSendMsgs.erase(it);
 	}
 	pthread_mutex_unlock(&SEND_MUTEX);
-	pthread_join(m_recvThread, NULL);
+	pthread_join(m_sendThread, NULL);
 }
 
 void ClientStruct::Close(void) {
@@ -107,6 +109,15 @@ void ClientStruct::Close(void) {
 	close(m_threadArgs.clientSocket);
 
 	pthread_join(m_recvThread, NULL);
+
+	pthread_mutex_lock(&SEND_MUTEX);
+	vector<pair<uint16_t, uint8_t *>>::iterator it;
+	for (it = m_threadArgs.bufferSendMsgs.begin(); it != m_threadArgs.bufferSendMsgs.end(); ++it) {
+		delete[](*it).second;
+		m_threadArgs.bufferSendMsgs.erase(it);
+	}
+	pthread_mutex_unlock(&SEND_MUTEX);
+	pthread_join(m_sendThread, NULL);
 
 	pthread_mutex_lock(&ClientStruct::DISCONNECTED_MUTEX);
 	m_threadArgs.callback->DisconnectedClient(m_threadArgs.instance);
