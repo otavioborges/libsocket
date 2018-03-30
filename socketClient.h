@@ -8,6 +8,8 @@
 #include <netinet/in.h>
 #include <pthread.h>
 #include "net.h"
+#include "socketFamily.h"
+#include "socketType.h"
 #include "SocketClientCallback.h"
 
 #define BUFFER_SIZE 1024
@@ -42,6 +44,7 @@ class net::SocketClient {
 		bool Connect(void);
 		void Close(void);
 		bool Connected(void);
+		void SetupCallbacks(net::SocketClientCallback &callback);
 		struct sockaddr_in *GetServerAddress(void);
 
 		// Sending msg

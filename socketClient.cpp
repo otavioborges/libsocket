@@ -60,7 +60,8 @@ void *SocketClient::SendRoutine(void *args) {
 			pthread_mutex_lock(&SEND_MUTEX);
 			arguments->bufferSendMsgs.erase(arguments->bufferSendMsgs.begin());
 			pthread_mutex_unlock(&SEND_MUTEX);
-
+			
+			// TODO: skip callbacks when not defined
 			arguments->callback->SendCallback(arguments->instance, result);
 		}
 	}
@@ -182,6 +183,10 @@ void SocketClient::Close(void) {
 
 bool SocketClient::Connected(void) {
 	return m_threadArgs.connected;
+}
+
+void SocketClient::SetupCallbacks(net::SocketClientCallback &callback) {
+	m_threadArgs.callback = &callback;
 }
 
 struct sockaddr_in *SocketClient::GetServerAddress(void) {
