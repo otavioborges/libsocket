@@ -85,8 +85,6 @@ SocketClient::SocketClient(string server, uint16_t port, net::SocketFamily famil
 		// not possible to break down addres, trying dns
 		struct hostent *he;
 		struct in_addr **addr_list;
-		int i;
-
 		if ((he = gethostbyname(server.c_str())) == NULL) {
 			m_isValid = false; // not possible to resolve address
 			return;
@@ -147,7 +145,7 @@ bool SocketClient::Connect(void) {
 		m_threadArgs.connected = true;
 	}
 
-	int result = pthread_create(&m_recvThread, NULL, SocketClient::RecvRoutine , (void *)&m_threadArgs);
+	result = pthread_create(&m_recvThread, NULL, SocketClient::RecvRoutine , (void *)&m_threadArgs);
 	if (result != 0) {
 		m_threadArgs.connected = false;
 		close(m_threadArgs.socket);
