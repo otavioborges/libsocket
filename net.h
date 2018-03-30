@@ -5,6 +5,7 @@ namespace net {
 	class ClientStruct;
 	class ClientStructSet;
 	class SocketServerCallback;
+	class SocketClientCallback;
 	class SocketClient;
 	class SocketServer;
 
