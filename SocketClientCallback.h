@@ -2,15 +2,15 @@
 #define SOCKETCLIENTCALLBACK_H_
 
 #include <stdint.h>
-#include "net.h"
-#include "ClientStruct.h"
+#include "socrates.h"
+#include "SocketClient.h"
 
-class net::SocketClientCallback {
+class socrates::SocketClientCallback {
 public:
-	virtual void Connected(net::SocketClient *client) = 0;
-	virtual void Disconnected(net::SocketClient *client) = 0;
-	virtual void ReceivedMessage(net::SocketClient *client, uint8_t *msg, uint16_t size) = 0;
-	virtual void SendCallback(net::SocketClient *client, int sent) {};
+	virtual void Connected(socrates::SocketClient *client) = 0;
+	virtual void Disconnected(socrates::SocketClient *client) = 0;
+	virtual void ReceivedMessage(socrates::SocketClient *client, uint8_t *msg, uint16_t size) = 0;
+	virtual void SendCallback(socrates::SocketClient *client, int sent) {};
 };
 
 #endif /* SOCKETCLIENTCALLBACK_H_ */

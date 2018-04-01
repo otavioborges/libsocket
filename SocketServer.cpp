@@ -2,9 +2,9 @@
 #include <time.h>
 #include <unistd.h>
 #include <algorithm>
-#include "socketServer.h"
+#include "SocketServer.h"
 
-using namespace net;
+using namespace socrates;
 using namespace std;
 
 typedef ClientStructSet::iterator clientListIterator;

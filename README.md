@@ -1,4 +1,4 @@
-# libsocket - A C++ Socket library for your daily needs ##
+# libsocrates - A C++ Socket library for your daily needs ##
 
 Easy to use and beautiful to leave haging on the balcony.
 

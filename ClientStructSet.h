@@ -4,14 +4,14 @@
 #include <set>
 #include <utility>
 #include <netinet/in.h>
-#include "net.h"
+#include "socrates.h"
 #include "ClientStruct.h"
 
-class net::ClientStructSet : public std::set<net::ClientStruct *> {
+class socrates::ClientStructSet : public std::set<socrates::ClientStruct *> {
 	public:
-		typedef typename std::set<net::ClientStruct *>::iterator iterator;
+		typedef typename std::set<socrates::ClientStruct *>::iterator iterator;
 
-		ClientStructSet() : std::set<net::ClientStruct *>() {};
+		ClientStructSet() : std::set<socrates::ClientStruct *>() {};
 		iterator find(const struct sockaddr_in& val) const;
 };
 

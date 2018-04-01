@@ -8,22 +8,22 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
-#include "net.h"
-#include "socketFamily.h"
-#include "socketType.h"
+#include "socrates.h"
+#include "SocketFamily.h"
+#include "SocketType.h"
 #include "ClientStruct.h"
 #include "SocketServerCallback.h"
 #include "ClientStructSet.h"
 
-class net::SocketServer {
+class socrates::SocketServer {
 	private:
 		static const int MAX_CLIENTS = 100;
 
 		typedef struct {
 			int socket;
 			bool listenning;
-			net::ClientStructSet clientList;
-			net::SocketServerCallback *callbacks;
+			socrates::ClientStructSet clientList;
+			socrates::SocketServerCallback *callbacks;
 			unsigned int maxClients;
 		} listen_thread_t;
 
@@ -38,7 +38,7 @@ class net::SocketServer {
 		static const in_addr_t AllInterfaces = INADDR_ANY;
 		static const in_addr_t Localhost = INADDR_LOOPBACK;
 
-		SocketServer(in_addr_t listenTo, uint16_t port, net::SocketFamily family, net::SocketType type);
+		SocketServer(in_addr_t listenTo, uint16_t port, socrates::SocketFamily family, socrates::SocketType type);
 		~SocketServer();
 
 		bool StartListenning(void);
@@ -46,11 +46,11 @@ class net::SocketServer {
 		bool IsListenning(void);
 
 		void DefineMaxClients(unsigned int clients);
-		void SetupCallbacks(net::SocketServerCallback &callback);
+		void SetupCallbacks(socrates::SocketServerCallback &callback);
 
-		void DisconnectClient(net::ClientStruct *client);
-		net::ClientStruct *GetClientIfPresent(struct in_addr addr);
-		net::ClientStructSet *GetConnectedClients(void);
+		void DisconnectClient(socrates::ClientStruct *client);
+		socrates::ClientStruct *GetClientIfPresent(struct in_addr addr);
+		socrates::ClientStructSet *GetConnectedClients(void);
 };
 
 #endif /* SOCKETSERVER_H_ */

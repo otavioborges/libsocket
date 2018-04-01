@@ -2,9 +2,9 @@
 #define SOCKETFAMILY_H_
 
 #include <cstdlib>
-#include "net.h"
+#include "socrates.h"
 
-enum class net::SocketFamily {
+enum class socrates::SocketFamily {
 	FamilyUnspec	= 0,
 	FamilyUnix		= 1,
 	FamilyIPv4		= 2,

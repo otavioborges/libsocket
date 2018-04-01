@@ -1,6 +1,6 @@
 #include "ClientStructSet.h"
 
-using namespace net;
+using namespace socrates;
 
 ClientStructSet::iterator ClientStructSet::find(const struct sockaddr_in& val) const {
 	iterator it = this->begin();

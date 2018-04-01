@@ -7,14 +7,14 @@
 #include <stdint.h>
 #include <netinet/in.h>
 #include <pthread.h>
-#include "net.h"
-#include "socketFamily.h"
-#include "socketType.h"
+#include "socrates.h"
+#include "SocketFamily.h"
+#include "SocketType.h"
 #include "SocketClientCallback.h"
 
 #define BUFFER_SIZE 1024
 
-class net::SocketClient {
+class socrates::SocketClient {
 	private:
 		static pthread_mutex_t RECEIVED_MUTEX;
 		static pthread_mutex_t SEND_MUTEX;
@@ -22,9 +22,9 @@ class net::SocketClient {
 
 		typedef struct {
 			int socket;
-			net::SocketClient *instance;
+			socrates::SocketClient *instance;
 			bool connected;
-			net::SocketClientCallback *callback;
+			socrates::SocketClientCallback *callback;
 			uint8_t buffer[BUFFER_SIZE];
 			struct sockaddr_in serverAddr;
 			std::vector<std::pair<uint16_t, uint8_t *>> bufferSendMsgs;
@@ -38,13 +38,13 @@ class net::SocketClient {
 		static void *RecvRoutine(void *args);
 		static void *SendRoutine(void *args);
 	public:
-		SocketClient(std::string server, uint16_t port, net::SocketFamily family, net::SocketType type);
-		SocketClient(in_addr_t server, uint16_t port, net::SocketFamily family, net::SocketType type);
+		SocketClient(std::string server, uint16_t port, socrates::SocketFamily family, socrates::SocketType type);
+		SocketClient(in_addr_t server, uint16_t port, socrates::SocketFamily family, socrates::SocketType type);
 		~SocketClient(void);
 		bool Connect(void);
 		void Close(void);
 		bool Connected(void);
-		void SetupCallbacks(net::SocketClientCallback &callback);
+		void SetupCallbacks(socrates::SocketClientCallback &callback);
 		struct sockaddr_in *GetServerAddress(void);
 
 		// Sending msg

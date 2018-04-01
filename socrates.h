@@ -1,16 +1,18 @@
-#ifndef NET_H_
-#define NET_H_
+#ifndef SOCRATES_H_
+#define SOCRATES_H_
 
-namespace net {
+namespace socrates {
+#ifdef SERVER
 	class ClientStruct;
 	class ClientStructSet;
 	class SocketServerCallback;
+	class SocketServer;
+#endif
 	class SocketClientCallback;
 	class SocketClient;
-	class SocketServer;
 
 	enum class SocketType;
 	enum class SocketFamily;
 }
 
-#endif /* NET_H_ */
+#endif /* SOCRATES_H_ */

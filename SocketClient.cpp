@@ -1,4 +1,4 @@
-#include "socketClient.h"
+#include "SocketClient.h"
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -6,7 +6,7 @@
 #include <string.h>
 
 using namespace std;
-using namespace net;
+using namespace socrates;
 
 pthread_mutex_t SocketClient::RECEIVED_MUTEX = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SocketClient::SEND_MUTEX = PTHREAD_MUTEX_INITIALIZER;
@@ -69,7 +69,7 @@ void *SocketClient::SendRoutine(void *args) {
 	return NULL;
 }
 
-SocketClient::SocketClient(string server, uint16_t port, net::SocketFamily family, net::SocketType type) {
+SocketClient::SocketClient(string server, uint16_t port, socrates::SocketFamily family, socrates::SocketType type) {
 	m_threadArgs.instance = this;
 	m_threadArgs.connected = false;
 	m_threadArgs.socket = socket((int)family, (int)type, 0);
@@ -101,7 +101,7 @@ SocketClient::SocketClient(string server, uint16_t port, net::SocketFamily famil
 	m_threadArgs.callback = NULL;
 }
 
-SocketClient::SocketClient(in_addr_t server, uint16_t port, net::SocketFamily family, net::SocketType type) {
+SocketClient::SocketClient(in_addr_t server, uint16_t port, socrates::SocketFamily family, socrates::SocketType type) {
 	m_threadArgs.instance = this;
 	m_threadArgs.connected = false;
 	m_threadArgs.socket = socket((int)family, (int)type, 0);
@@ -185,7 +185,7 @@ bool SocketClient::Connected(void) {
 	return m_threadArgs.connected;
 }
 
-void SocketClient::SetupCallbacks(net::SocketClientCallback &callback) {
+void SocketClient::SetupCallbacks(socrates::SocketClientCallback &callback) {
 	m_threadArgs.callback = &callback;
 }
 

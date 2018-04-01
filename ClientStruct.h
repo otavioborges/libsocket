@@ -7,22 +7,22 @@
 #include <stdint.h>
 #include <netinet/in.h>
 #include <pthread.h>
-#include "net.h"
+#include "socrates.h"
 #include "SocketServerCallback.h"
 
 #define BUFFER_SIZE 1024
 
-class net::ClientStruct {
+class socrates::ClientStruct {
 	private:
 		static pthread_mutex_t RECEIVED_MUTEX;
 		static pthread_mutex_t SEND_MUTEX;
 		static pthread_mutex_t DISCONNECTED_MUTEX;
 
 		typedef struct {
-			net::ClientStruct *instance;
+			socrates::ClientStruct *instance;
 			int clientSocket;
 			bool connected;
-			net::SocketServerCallback *callback;
+			socrates::SocketServerCallback *callback;
 			uint8_t buffer[BUFFER_SIZE];
 			struct sockaddr_in addr;
 			int error;
@@ -36,7 +36,7 @@ class net::ClientStruct {
 		static void *RecvRoutine(void *args);
 		static void *SendRoutine(void *args);
 	public:
-		ClientStruct(int clientSocket, struct sockaddr_in addr, net::SocketServerCallback &callback);
+		ClientStruct(int clientSocket, struct sockaddr_in addr, socrates::SocketServerCallback &callback);
 		~ClientStruct(void);
 		void Close(void);
 		bool Connected(void);

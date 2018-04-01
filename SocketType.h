@@ -2,9 +2,9 @@
 #define SOCKETTYPE_H_
 
 #include <cstdlib>
-#include "net.h"
+#include "socrates.h"
 
-enum class net::SocketType {
+enum class socrates::SocketType {
 	SockStream		= 1,
 	SockDgram		= 2,
 	SockRaw			= 3,

@@ -5,7 +5,7 @@
 #include <string.h>
 
 using namespace std;
-using namespace net;
+using namespace socrates;
 
 pthread_mutex_t ClientStruct::RECEIVED_MUTEX = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t ClientStruct::SEND_MUTEX = PTHREAD_MUTEX_INITIALIZER;
@@ -67,7 +67,7 @@ void *ClientStruct::SendRoutine(void *args) {
 	return NULL;
 }
 
-ClientStruct::ClientStruct(int clientSocket, struct sockaddr_in addr, net::SocketServerCallback &callback) {
+ClientStruct::ClientStruct(int clientSocket, struct sockaddr_in addr, socrates::SocketServerCallback &callback) {
 	m_threadArgs.addr = addr;
 	m_threadArgs.clientSocket = clientSocket;
 	m_threadArgs.callback = &callback;
