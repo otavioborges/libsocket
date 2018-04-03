@@ -43,7 +43,7 @@ void *SocketClient::SendRoutine(void *args) {
 		pthread_mutex_lock(&SEND_MUTEX);
 		if (arguments->bufferSendMsgs.size() <= 0) {
 			pthread_mutex_unlock(&SEND_MUTEX);
-			usleep(10000);
+			usleep(1000);
 			continue;
 		}
 		length = arguments->bufferSendMsgs[0].first;
