@@ -69,7 +69,6 @@ SocketServer::~SocketServer() {
 	if (m_threadArgs.listenning)
 		m_threadArgs.listenning = false;
 
-	shutdown(m_threadArgs.socket, SHUT_RDWR);
 	close(m_threadArgs.socket);
 
 	pthread_join(m_listenThread, NULL);
